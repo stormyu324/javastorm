@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('购物车')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: storeHeader}"></header>
+<main class="container">
+    <h1>购物车</h1>
+    <div class="card center" th:if="${cart.empty}">
+        <p class="muted">购物车是空的</p>
+        <a th:href="@{/}" class="btn">去逛逛</a>
+    </div>
+    <th:block th:unless="${cart.empty}">
+        <div class="table-wrap card" style="padding:0">
+            <table>
+                <thead>
+                <tr><th>商品</th><th class="num">单价</th><th>数量</th><th class="num">小计</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="line : ${cart.lines}">
+                    <td>
+                        <div class="actions">
+                            <img class="mini-thumb" th:src="${line.product.mainImage != null} ? ${line.product.mainImage} : @{/img/placeholder.svg}" alt="">
+                            <div>
+                                <a th:href="@{/products/{id}(id=${line.product.id})}" th:text="${line.product.name}"></a>
+                                <div class="low-stock" th:unless="${line.available}"
+                                     th:text="${!line.product.onSale} ? '已下架' : '库存不足，仅剩 ' + ${line.product.stock} + ' 件'"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="num" th:text="'¥' + ${#numbers.formatDecimal(line.product.price, 1, 2)}"></td>
+                    <td>
+                        <form th:action="@{/cart/update}" method="post" class="actions">
+                            <input type="hidden" name="productId" th:value="${line.product.id}">
+                            <input class="qty" type="number" name="quantity" th:value="${line.quantity}" min="0" max="99" onchange="this.form.submit()">
+                        </form>
+                    </td>
+                    <td class="num" th:text="'¥' + ${#numbers.formatDecimal(line.subtotal, 1, 2)}"></td>
+                    <td>
+                        <form th:action="@{/cart/remove}" method="post" class="inline">
+                            <input type="hidden" name="productId" th:value="${line.product.id}">
+                            <button type="submit" class="link">删除</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card actions" style="justify-content:flex-end">
+            <span>合计：<span class="price" th:text="'¥' + ${#numbers.formatDecimal(cart.total, 1, 2)}"></span></span>
+            <a th:if="${cart.allAvailable}" th:href="@{/checkout}" class="btn">去结算</a>
+            <span th:unless="${cart.allAvailable}" class="muted">请先调整不可购买的商品</span>
+        </div>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

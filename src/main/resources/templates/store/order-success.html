@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('下单成功')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: storeHeader}"></header>
+<main class="container narrow">
+    <div class="card center">
+        <h1>下单成功 🎉</h1>
+        <p>订单号：<strong th:text="${order.orderNo}"></strong></p>
+        <p>应付金额：<span class="price" th:text="'¥' + ${#numbers.formatDecimal(order.total, 1, 2)}"></span></p>
+        <p class="muted">收货人：<span th:text="${order.customerName}"></span>，<span th:text="${order.address}"></span></p>
+        <a th:href="@{/}" class="btn">继续购物</a>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

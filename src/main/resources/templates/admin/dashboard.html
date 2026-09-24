@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('后台概览')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: adminHeader('dashboard')}"></header>
+<main class="container">
+    <h1>概览</h1>
+    <div class="stats">
+        <a class="stat" th:href="@{/admin/products(status='ON_SALE')}"><div class="muted">在售商品</div><div class="n" th:text="${onSale}">0</div></a>
+        <a class="stat" th:href="@{/admin/products(status='DRAFT')}"><div class="muted">草稿（待上架）</div><div class="n" th:text="${drafts}">0</div></a>
+        <a class="stat" th:href="@{/admin/products(status='OFF_SHELF')}"><div class="muted">已下架</div><div class="n" th:text="${offShelf}">0</div></a>
+        <div class="stat"><div class="muted" th:text="'库存 ≤ ' + ${lowStockThreshold} + ' 的在售商品'">库存紧张</div><div class="n" th:classappend="${lowStock > 0} ? 'low-stock'" th:text="${lowStock}">0</div></div>
+        <a class="stat" th:href="@{/admin/orders(status='PLACED')}"><div class="muted">待处理订单</div><div class="n" th:text="${pendingOrders}">0</div></a>
+    </div>
+    <div class="card">
+        <h2>快速上架</h2>
+        <div class="actions">
+            <a th:href="@{/admin/products/new}" class="btn">＋ 添加单个商品</a>
+            <a th:href="@{/admin/products/import}" class="btn ghost">📄 用表格批量导入</a>
+            <a th:href="@{/admin/categories}" class="btn ghost">管理分类</a>
+        </div>
+        <p class="muted">小技巧：添加商品时点“保存并继续添加”可以连续录入；同款不同规格的商品可在列表里“复制”后改一下再上架。</p>
+    </div>
+</main>
+</body>
+</html>

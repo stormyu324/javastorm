@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('订单管理')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: adminHeader('orders')}"></header>
+<main class="container">
+    <h1>订单管理</h1>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <div class="filters">
+        <a th:href="@{/admin/orders}" class="btn small" th:classappend="${status != null} ? 'ghost'">全部</a>
+        <a th:each="s : ${statuses}" th:href="@{/admin/orders(status=${s})}" class="btn small"
+           th:classappend="${s != status} ? 'ghost'" th:text="${s.label}"></a>
+    </div>
+
+    <div class="table-wrap card" style="padding:0">
+        <table>
+            <thead><tr><th>订单号 / 时间</th><th>商品</th><th class="num">金额</th><th>收货信息</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+            <tr th:if="${orders.empty}"><td colspan="6" class="center muted">暂无订单</td></tr>
+            <tr th:each="o : ${orders}">
+                <td>
+                    <div th:text="${o.orderNo}"></div>
+                    <div class="muted" style="font-size:.85rem" th:text="${#temporals.format(o.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                </td>
+                <td>
+                    <div th:each="i : ${o.items}" th:text="${i.productName} + ' × ' + ${i.quantity}"></div>
+                </td>
+                <td class="num price" th:text="'¥' + ${#numbers.formatDecimal(o.total, 1, 2)}"></td>
+                <td>
+                    <div th:text="${o.customerName} + '  ' + ${o.phone}"></div>
+                    <div class="muted" style="font-size:.85rem" th:text="${o.address}"></div>
+                    <div class="muted" style="font-size:.85rem" th:if="${o.note}" th:text="'备注：' + ${o.note}"></div>
+                </td>
+                <td><span class="tag" th:classappend="${o.status}" th:text="${o.status.label}"></span></td>
+                <td>
+                    <form th:unless="${o.status.name() == 'CANCELLED'}" th:action="@{/admin/orders/{id}/status(id=${o.id})}" method="post" class="actions"
+                          onsubmit="return this.status.value !== 'CANCELLED' || confirm('取消订单会把库存加回去，确定吗？')">
+                        <select name="status">
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}" th:selected="${s == o.status}"></option>
+                        </select>
+                        <button type="submit" class="small ghost">更新</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="pager" th:if="${orders.totalPages > 1}">
+        <th:block th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}">
+            <span class="current" th:if="${i == orders.number}" th:text="${i + 1}"></span>
+            <a th:unless="${i == orders.number}" th:href="@{/admin/orders(status=${status},page=${i})}" th:text="${i + 1}"></a>
+        </th:block>
+    </nav>
+</main>
+</body>
+</html>

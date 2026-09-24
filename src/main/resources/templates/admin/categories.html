@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('分类管理')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: adminHeader('categories')}"></header>
+<main class="container" style="max-width:800px">
+    <h1>分类管理</h1>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <form class="card actions" th:action="@{/admin/categories}" method="post">
+        <input name="name" placeholder="新分类名称" required maxlength="50">
+        <input name="sortOrder" type="number" value="0" style="width:100px" title="排序，数字越小越靠前">
+        <button type="submit">添加分类</button>
+    </form>
+
+    <div class="table-wrap card" style="padding:0">
+        <table>
+            <thead><tr><th>名称</th><th>排序</th><th class="num">商品数</th><th></th></tr></thead>
+            <tbody>
+            <tr th:if="${categories.isEmpty()}"><td colspan="4" class="center muted">还没有分类</td></tr>
+            <tr th:each="entry : ${categories}" th:with="c=${entry.key}">
+                <td>
+                    <form th:id="'cat-' + ${c.id}" th:action="@{/admin/categories/{id}(id=${c.id})}" method="post" class="inline"></form>
+                    <input name="name" th:value="${c.name}" th:form="'cat-' + ${c.id}" required maxlength="50">
+                </td>
+                <td><input name="sortOrder" type="number" th:value="${c.sortOrder}" th:form="'cat-' + ${c.id}" style="width:90px"></td>
+                <td class="num"><a th:href="@{/admin/products(category=${c.id})}" th:text="${entry.value}"></a></td>
+                <td>
+                    <div class="actions">
+                        <button type="submit" class="small ghost" th:form="'cat-' + ${c.id}">保存</button>
+                        <form th:action="@{/admin/categories/{id}/delete(id=${c.id})}" method="post" class="inline"
+                              onsubmit="return confirm('确定删除这个分类吗？')">
+                            <button type="submit" class="small danger">删除</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

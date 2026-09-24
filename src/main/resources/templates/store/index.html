@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('首页')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: storeHeader}"></header>
+<main class="container">
+    <div class="store-layout">
+        <aside>
+            <ul class="side-cats">
+                <li><a th:href="@{/(q=${q})}" th:classappend="${category == null} ? 'active'">全部商品</a></li>
+                <li th:each="c : ${categories}">
+                    <a th:href="@{/(category=${c.id},q=${q})}" th:classappend="${category == c.id} ? 'active'" th:text="${c.name}">分类</a>
+                </li>
+            </ul>
+        </aside>
+        <section>
+            <div class="toolbar">
+                <div class="muted">
+                    <span th:if="${q}">“<span th:text="${q}"></span>”的搜索结果，</span>
+                    共 <span th:text="${products.totalElements}">0</span> 件商品
+                </div>
+                <form th:action="@{/}" method="get">
+                    <input type="hidden" name="q" th:value="${q}">
+                    <input type="hidden" name="category" th:value="${category}">
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="new" th:selected="${sort == 'new'}">最新上架</option>
+                        <option value="price_asc" th:selected="${sort == 'price_asc'}">价格从低到高</option>
+                        <option value="price_desc" th:selected="${sort == 'price_desc'}">价格从高到低</option>
+                    </select>
+                </form>
+            </div>
+
+            <div class="card center muted" th:if="${products.empty}">暂时没有商品</div>
+
+            <div class="product-grid">
+                <a class="product-card" th:each="p : ${products}" th:href="@{/products/{id}(id=${p.id})}">
+                    <div class="thumb">
+                        <img th:src="${p.mainImage != null} ? ${p.mainImage} : @{/img/placeholder.svg}" th:alt="${p.name}" loading="lazy">
+                    </div>
+                    <div class="info">
+                        <div class="name" th:text="${p.name}">商品名称</div>
+                        <div>
+                            <span class="price"><small>¥</small><span th:text="${#numbers.formatDecimal(p.price, 1, 2)}">0.00</span></span>
+                            <span class="orig" th:if="${p.hasDiscount()}" th:text="'¥' + ${#numbers.formatDecimal(p.originalPrice, 1, 2)}"></span>
+                        </div>
+                        <div class="soldout" th:if="${p.stock <= 0}">已售罄</div>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="pager" th:if="${products.totalPages > 1}">
+                <th:block th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}">
+                    <span class="current" th:if="${i == products.number}" th:text="${i + 1}"></span>
+                    <a th:unless="${i == products.number}" th:href="@{/(q=${q},category=${category},sort=${sort},page=${i})}" th:text="${i + 1}"></a>
+                </th:block>
+            </nav>
+        </section>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

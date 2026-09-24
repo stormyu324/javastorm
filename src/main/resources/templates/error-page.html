@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('出错了')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: storeHeader}"></header>
+<main class="container narrow">
+    <div class="card center">
+        <h1>操作未完成</h1>
+        <p th:text="${message}">出错了</p>
+        <p><a href="javascript:history.back()" class="btn">返回上一页</a> <a th:href="@{/}" class="btn ghost">回到首页</a></p>
+    </div>
+</main>
+</body>
+</html>

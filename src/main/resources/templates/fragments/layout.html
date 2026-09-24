@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' - Storm 商城'">Storm 商城</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<header th:fragment="storeHeader" class="topbar">
+    <div class="container topbar-inner">
+        <a class="brand" th:href="@{/}">Storm 商城</a>
+        <form class="search" th:action="@{/}" method="get">
+            <input type="search" name="q" th:value="${q}" placeholder="搜索商品">
+            <button type="submit">搜索</button>
+        </form>
+        <nav class="topnav">
+            <a th:href="@{/cart}">购物车 <span class="badge" th:if="${cartCount > 0}" th:text="${cartCount}">0</span></a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">管理后台</a>
+        </nav>
+    </div>
+</header>
+
+<header th:fragment="adminHeader(active)" class="topbar admin">
+    <div class="container topbar-inner">
+        <a class="brand" th:href="@{/admin}">商城后台</a>
+        <nav class="topnav">
+            <a th:href="@{/admin}" th:classappend="${active == 'dashboard'} ? 'active'">概览</a>
+            <a th:href="@{/admin/products}" th:classappend="${active == 'products'} ? 'active'">商品</a>
+            <a th:href="@{/admin/products/import}" th:classappend="${active == 'import'} ? 'active'">批量导入</a>
+            <a th:href="@{/admin/categories}" th:classappend="${active == 'categories'} ? 'active'">分类</a>
+            <a th:href="@{/admin/orders}" th:classappend="${active == 'orders'} ? 'active'">订单</a>
+            <a th:href="@{/}" target="_blank">查看商城 ↗</a>
+            <form th:action="@{/admin/logout}" method="post" class="inline">
+                <button type="submit" class="link">退出</button>
+            </form>
+        </nav>
+    </div>
+</header>
+
+<div th:fragment="flash">
+    <div class="alert success" th:if="${message}" th:text="${message}"></div>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+</div>
+
+<footer th:fragment="footer" class="footer">
+    <div class="container">© Storm 商城</div>
+</footer>
+
+</body>
+</html>

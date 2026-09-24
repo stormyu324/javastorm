@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('确认订单')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: storeHeader}"></header>
+<main class="container narrow">
+    <h1>确认订单</h1>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <div class="card">
+        <h2>商品清单</h2>
+        <table>
+            <tr th:each="line : ${cart.lines}">
+                <td th:text="${line.product.name}"></td>
+                <td class="num" th:text="'× ' + ${line.quantity}"></td>
+                <td class="num" th:text="'¥' + ${#numbers.formatDecimal(line.subtotal, 1, 2)}"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="num"><strong>合计</strong></td>
+                <td class="num price" th:text="'¥' + ${#numbers.formatDecimal(cart.total, 1, 2)}"></td>
+            </tr>
+        </table>
+    </div>
+    <form class="card" th:action="@{/checkout}" th:object="${form}" method="post">
+        <h2>收货信息</h2>
+        <div class="grid-2">
+            <div class="field">
+                <label for="customerName">收货人</label>
+                <input id="customerName" th:field="*{customerName}" required maxlength="50">
+                <div class="err" th:errors="*{customerName}"></div>
+            </div>
+            <div class="field">
+                <label for="phone">手机号</label>
+                <input id="phone" th:field="*{phone}" required maxlength="30" inputmode="tel">
+                <div class="err" th:errors="*{phone}"></div>
+            </div>
+        </div>
+        <div class="field">
+            <label for="address">收货地址</label>
+            <input id="address" th:field="*{address}" required maxlength="300">
+            <div class="err" th:errors="*{address}"></div>
+        </div>
+        <div class="field">
+            <label for="note">备注（可选）</label>
+            <input id="note" th:field="*{note}" maxlength="500">
+        </div>
+        <p class="muted">本示例未接入在线支付，提交后商家会与您联系确认。</p>
+        <button type="submit">提交订单</button>
+    </form>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

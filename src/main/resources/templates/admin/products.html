@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('商品管理')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: adminHeader('products')}"></header>
+<main class="container">
+    <div class="toolbar">
+        <h1 style="margin:0">商品管理</h1>
+        <div class="actions">
+            <a th:href="@{/admin/products/import}" class="btn ghost">批量导入</a>
+            <a th:href="@{/admin/products/new}" class="btn">＋ 添加商品</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <form class="filters" th:action="@{/admin/products}" method="get">
+        <input type="search" name="q" th:value="${q}" placeholder="名称或 SKU">
+        <select name="status">
+            <option value="">全部状态</option>
+            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}" th:selected="${s == status}"></option>
+        </select>
+        <select name="category">
+            <option value="">全部分类</option>
+            <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${c.id == category}"></option>
+        </select>
+        <button type="submit" class="ghost">筛选</button>
+    </form>
+
+    <form id="batchForm" th:action="@{/admin/products/batch}" method="post"
+          onsubmit="return this.op.value !== 'delete' || confirm('确定删除选中的商品吗？此操作不可恢复。')">
+        <input type="hidden" name="back" th:value="${back}">
+        <input type="hidden" name="op" value="">
+    </form>
+    <div class="actions" style="margin-bottom:10px">
+        <span class="muted">批量操作：</span>
+        <button type="button" class="small ghost" onclick="batch('ON_SALE')">上架</button>
+        <button type="button" class="small ghost" onclick="batch('OFF_SHELF')">下架</button>
+        <button type="button" class="small ghost" onclick="batch('DRAFT')">设为草稿</button>
+        <button type="button" class="small danger" onclick="batch('delete')">删除</button>
+    </div>
+
+    <div class="table-wrap card" style="padding:0">
+        <table>
+            <thead>
+            <tr>
+                <th><input type="checkbox" onclick="document.querySelectorAll('input[name=ids]').forEach(c => c.checked = this.checked)"></th>
+                <th>图片</th><th>名称 / SKU</th><th>分类</th><th class="num">售价</th><th class="num">库存</th><th>状态</th><th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${products.empty}"><td colspan="8" class="center muted">没有找到商品</td></tr>
+            <tr th:each="p : ${products}">
+                <td><input type="checkbox" name="ids" th:value="${p.id}" form="batchForm"></td>
+                <td><img class="mini-thumb" th:src="${p.mainImage != null} ? ${p.mainImage} : @{/img/placeholder.svg}" alt=""></td>
+                <td>
+                    <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" th:text="${p.name}"></a>
+                    <div class="muted" style="font-size:.85rem" th:text="${p.sku}"></div>
+                </td>
+                <td th:text="${p.category?.name} ?: '—'"></td>
+                <td class="num" th:text="'¥' + ${#numbers.formatDecimal(p.price, 1, 2)}"></td>
+                <td class="num" th:classappend="${p.stock <= 5} ? 'low-stock'" th:text="${p.stock}"></td>
+                <td><span class="tag" th:classappend="${p.status}" th:text="${p.status.label}"></span></td>
+                <td>
+                    <div class="actions">
+                        <a th:href="@{/admin/products/{id}/edit(id=${p.id})}">编辑</a>
+                        <form th:action="@{/admin/products/{id}/status(id=${p.id})}" method="post" class="inline">
+                            <input type="hidden" name="back" th:value="${back}">
+                            <input type="hidden" name="status" th:value="${p.onSale} ? 'OFF_SHELF' : 'ON_SALE'">
+                            <button type="submit" class="link" th:text="${p.onSale} ? '下架' : '上架'"></button>
+                        </form>
+                        <form th:action="@{/admin/products/{id}/duplicate(id=${p.id})}" method="post" class="inline">
+                            <button type="submit" class="link">复制</button>
+                        </form>
+                        <a th:if="${p.onSale}" th:href="@{/products/{id}(id=${p.id})}" target="_blank">预览</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="pager" th:if="${products.totalPages > 1}">
+        <th:block th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}">
+            <span class="current" th:if="${i == products.number}" th:text="${i + 1}"></span>
+            <a th:unless="${i == products.number}" th:href="@{/admin/products(q=${q},status=${status},category=${category},page=${i})}" th:text="${i + 1}"></a>
+        </th:block>
+    </nav>
+</main>
+<script>
+    function batch(action) {
+        var form = document.getElementById('batchForm');
+        form.op.value = action;
+        if (form.onsubmit()) form.submit();
+    }
+</script>
+</body>
+</html>

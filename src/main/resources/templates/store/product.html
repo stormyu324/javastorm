@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${product.name})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: storeHeader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <p class="muted">
+        <a th:href="@{/}">首页</a>
+        <th:block th:if="${product.category}"> / <a th:href="@{/(category=${product.category.id})}" th:text="${product.category.name}"></a></th:block>
+    </p>
+    <div class="detail card">
+        <div class="gallery">
+            <div class="main">
+                <img id="mainImage" th:src="${product.mainImage != null} ? ${product.mainImage} : @{/img/placeholder.svg}" th:alt="${product.name}">
+            </div>
+            <div class="thumbs" th:if="${product.imageUrls.size() > 1}">
+                <img th:each="url, st : ${product.imageUrls}" th:src="${url}" th:classappend="${st.first} ? 'active'" alt="">
+            </div>
+        </div>
+        <div>
+            <h1 th:text="${product.name}">商品名称</h1>
+            <p>
+                <span class="price"><small>¥</small><span th:text="${#numbers.formatDecimal(product.price, 1, 2)}">0.00</span></span>
+                <span class="orig" th:if="${product.hasDiscount()}" th:text="'¥' + ${#numbers.formatDecimal(product.originalPrice, 1, 2)}"></span>
+            </p>
+            <p class="muted">
+                库存：<span th:text="${product.stock > 0} ? ${product.stock} + ' 件' : '已售罄'"></span>
+                · 编号：<span th:text="${product.sku}"></span>
+            </p>
+            <form th:if="${product.stock > 0}" th:action="@{/cart/add}" method="post" class="actions">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <label>数量 <input class="qty" type="number" name="quantity" value="1" min="1" th:max="${product.stock}"></label>
+                <button type="submit" class="ghost">加入购物车</button>
+                <button type="submit" name="buyNow" value="1">立即购买</button>
+            </form>
+            <p th:if="${product.stock <= 0}"><button disabled class="ghost">已售罄</button></p>
+            <hr style="border:0;border-top:1px solid var(--border);margin:20px 0">
+            <h2>商品详情</h2>
+            <div class="description" th:text="${product.description ?: '暂无描述'}"></div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script>
+    document.querySelectorAll('.gallery .thumbs img').forEach(function (img) {
+        img.addEventListener('click', function () {
+            document.getElementById('mainImage').src = img.src;
+            document.querySelectorAll('.gallery .thumbs img').forEach(function (i) { i.classList.remove('active'); });
+            img.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
