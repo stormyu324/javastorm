@@ -4,16 +4,25 @@
 
 ## 快速开始
 
-需要 JDK 21 和 Maven 3.9+，不需要安装数据库。
+只需要安装 **JDK 21**（不用装 Maven 和数据库，项目自带 Maven Wrapper）。
 
 ```bash
-mvn spring-boot:run
+git clone https://github.com/stormyu324/javastorm.git
+cd javastorm
+git checkout claude/determined-gauss-5n658i
+
+# macOS / Linux
+./mvnw spring-boot:run
+# Windows
+mvnw.cmd spring-boot:run
 ```
+
+看到 `Started ShopApplication` 后打开浏览器：
 
 - 商城首页：http://localhost:8080
 - 管理后台：http://localhost:8080/admin （默认账号 `admin` / `admin123`）
 
-首次启动会自动写入几条示例商品（`DEMO_DATA=false` 可关闭）。
+首次启动会自动写入几条示例商品（`DEMO_DATA=false` 可关闭）。按 `Ctrl + C` 停止。
 
 ## 上架商品的几种方式
 
@@ -58,12 +67,12 @@ mvn spring-boot:run
 ## 打包部署
 
 ```bash
-mvn package
+./mvnw package
 ADMIN_PASSWORD=你的强密码 java -jar target/shop-0.1.0.jar
 ```
 
 ## 测试
 
 ```bash
-mvn test
+./mvnw test
 ```
