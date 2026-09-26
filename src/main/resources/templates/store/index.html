@@ -4,8 +4,19 @@
 <body>
 <header th:replace="~{fragments/layout :: storeHeader}"></header>
 <main class="container">
+    <section class="hero" th:if="${q == null and category == null and products.number == 0}">
+        <span class="eyebrow">NEW ARRIVALS · 2026</span>
+        <h1>发现好物，<span class="accent">智选生活</span></h1>
+        <p>精选品质好物，每日上新。简单下单，快速发货，让购物回归轻松。</p>
+        <div class="chips">
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3z"/><path d="m9 12 2 2 4-4"/></svg>正品保障</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>极速发货</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>无忧售后</span>
+        </div>
+    </section>
     <div class="store-layout">
         <aside>
+            <p class="side-title">Categories</p>
             <ul class="side-cats">
                 <li><a th:href="@{/(q=${q})}" th:classappend="${category == null} ? 'active'">全部商品</a></li>
                 <li th:each="c : ${categories}">
@@ -35,6 +46,7 @@
             <div class="product-grid">
                 <a class="product-card" th:each="p : ${products}" th:href="@{/products/{id}(id=${p.id})}">
                     <div class="thumb">
+                        <span class="sale-tag" th:if="${p.hasDiscount()}">SALE</span>
                         <img th:src="${p.mainImage != null} ? ${p.mainImage} : @{/img/placeholder.svg}" th:alt="${p.name}" loading="lazy">
                     </div>
                     <div class="info">

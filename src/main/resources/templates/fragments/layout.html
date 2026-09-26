@@ -4,19 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${title} + ' - Storm 商城'">Storm 商城</title>
+    <meta name="theme-color" content="#f5f8fc">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2306b6d4'/%3E%3Cstop offset='.55' stop-color='%233b82f6'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M18 5 8 18h7l-2 9 11-14h-7.2L18 5z' fill='%23fff'/%3E%3C/svg%3E">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
 
 <header th:fragment="storeHeader" class="topbar">
     <div class="container topbar-inner">
-        <a class="brand" th:href="@{/}">Storm 商城</a>
+        <a class="brand" th:href="@{/}"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2 4 13.5h6.5L9 22l10-12h-6.6L13.5 2z"/></svg></span><span>Storm<span class="accent">商城</span></span></a>
         <form class="search" th:action="@{/}" method="get">
             <input type="search" name="q" th:value="${q}" placeholder="搜索商品">
             <button type="submit">搜索</button>
         </form>
         <nav class="topnav">
-            <a th:href="@{/cart}">购物车 <span class="badge" th:if="${cartCount > 0}" th:text="${cartCount}">0</span></a>
+            <a th:href="@{/cart}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1.6 1.6 0 0 0 1.6 1.3h8.7a1.6 1.6 0 0 0 1.6-1.2L21 7H6"/></svg>购物车 <span class="badge" th:if="${cartCount > 0}" th:text="${cartCount}">0</span></a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">管理后台</a>
         </nav>
     </div>
@@ -24,7 +26,7 @@
 
 <header th:fragment="adminHeader(active)" class="topbar admin">
     <div class="container topbar-inner">
-        <a class="brand" th:href="@{/admin}">商城后台</a>
+        <a class="brand" th:href="@{/admin}"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2 4 13.5h6.5L9 22l10-12h-6.6L13.5 2z"/></svg></span><span>Storm<span class="accent">商城</span></span><span class="console">ADMIN</span></a>
         <nav class="topnav">
             <a th:href="@{/admin}" th:classappend="${active == 'dashboard'} ? 'active'">概览</a>
             <a th:href="@{/admin/products}" th:classappend="${active == 'products'} ? 'active'">商品</a>
@@ -45,7 +47,7 @@
 </div>
 
 <footer th:fragment="footer" class="footer">
-    <div class="container">© Storm 商城</div>
+    <div class="container">© Storm 商城 · Powered by Spring Boot</div>
 </footer>
 
 </body>

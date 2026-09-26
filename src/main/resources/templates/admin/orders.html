@@ -20,7 +20,7 @@
             <tr th:if="${orders.empty}"><td colspan="6" class="center muted">暂无订单</td></tr>
             <tr th:each="o : ${orders}">
                 <td>
-                    <div th:text="${o.orderNo}"></div>
+                    <div class="mono" th:text="${o.orderNo}"></div>
                     <div class="muted" style="font-size:.85rem" th:text="${#temporals.format(o.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
                 </td>
                 <td>

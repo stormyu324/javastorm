@@ -54,7 +54,7 @@
                 <td><img class="mini-thumb" th:src="${p.mainImage != null} ? ${p.mainImage} : @{/img/placeholder.svg}" alt=""></td>
                 <td>
                     <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" th:text="${p.name}"></a>
-                    <div class="muted" style="font-size:.85rem" th:text="${p.sku}"></div>
+                    <div class="sku" th:text="${p.sku}"></div>
                 </td>
                 <td th:text="${p.category?.name} ?: '—'"></td>
                 <td class="num" th:text="'¥' + ${#numbers.formatDecimal(p.price, 1, 2)}"></td>
